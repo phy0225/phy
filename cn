@@ -1,0 +1,43 @@
+
+import re
+import jieba.posseg as pseg
+
+
+#结巴分词
+def jieba_cut(data):
+    woe=[]
+    for i in range(len(data)):
+        y=re.sub(r'\W','',data[i])
+        y=re.sub(r'[A-Za-z0-9]','',y)
+        words=pseg.cut(y)
+        w=[]
+        for j in words:
+#            if j.flag=='n':
+#                n=j.word#+j.flag
+             w.append(j.word)
+        woe.append(w)
+        
+    for i in range(len(woe)):
+        for j in range(len(woe[i])):
+            if len(woe[i][j])<1:
+                woe[i][j]=''
+                
+    
+    for i in range(len(woe)):
+        while '' in  woe[i]:
+            woe[i].remove('')
+            
+    word=[]
+    for i in range(len(woe)):
+        word += woe[i]
+    dictionary=Counter(word)  
+    dictionary=sorted(dictionary.items(),key=lambda e:e[1],reverse=True)
+    
+    dic=[]
+    for i in range(len(dictionary)):
+        dic.append(re.sub(r'[A-Za-z0-9]','',dictionary[i][0]))
+        
+    for i in range(len(woe)):
+        woe[i]=' '.join(woe[i])
+        
+    return woe,dictionary,dic
